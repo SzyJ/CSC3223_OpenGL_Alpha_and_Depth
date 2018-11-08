@@ -54,3 +54,20 @@ void Renderer::OnWindowResize(int w, int h)	{
 	OGLRenderer::OnWindowResize(w, h);
 	projMatrix = Matrix4::Orthographic(-1.0f, 1.0f, (float)currentWidth, 0.0f, 0.0f, (float)currentHeight);
 }
+
+void Renderer::SetDepthBufferState(bool state) {
+	if (state) {
+		glEnable(GL_DEPTH_TEST);
+	}
+	else {
+		glDisable(GL_DEPTH_TEST);
+	}
+}
+
+void Renderer::SetAlphaBlendingState(bool state) {
+	if (state) {
+		glEnable(GL_BLEND);
+	}
+	else {
+		glDisable(GL_BLEND);
+	}}

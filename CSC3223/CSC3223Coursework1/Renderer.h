@@ -35,6 +35,9 @@ namespace NCL {
 				viewMatrix = m;
 			}
 
+			void SetDepthBufferState(bool state);
+			void SetAlphaBlendingState(bool state);
+
 		protected:
 			void RenderNode(RenderObject* root);
 	

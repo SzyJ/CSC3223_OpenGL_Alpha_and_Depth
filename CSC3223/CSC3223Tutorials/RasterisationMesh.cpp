@@ -14,7 +14,8 @@ RasterisationMesh* RasterisationMesh::CreateLineFromPoints(const std::vector<Vec
 	for (int i = 0; i < vertices.size(); i += 2) {
 		if (bresenham) {
 			line->RasterBresenhamLine(vertices[i], vertices[i + 1]);
-		} else {
+		}
+		else {
 			line->RasterBasicLine(vertices[i], vertices[i + 1]);
 		}
 	}
@@ -28,7 +29,7 @@ RasterisationMesh* RasterisationMesh::CreateLineFromPoints(const std::vector<Vec
 void RasterisationMesh::RasterBasicLine(const Vector3& v0, const Vector3& v1) {
 	float lineLength = (v0 - v1).Length();
 	int numPixels = (int)lineLength;
-	
+
 	float lerpAmount = 1.0f / (numPixels - 1);
 	float t = 0.0f;
 
@@ -53,12 +54,13 @@ void RasterisationMesh::RasterBresenhamLine(const Vector3& v0, const Vector3& v1
 
 	if (abs(dir.y) > abs(dir.y)) {
 		slope = (dir.x / dir.y);
-		scanRange = (int) abs(dir.y);
+		scanRange = (int)abs(dir.y);
 		periodAxis = &currentPos.x;
 		scanAxis = &currentPos.y;
 		scanDelta = (dir.y < 0.0f) ? -1 : 1;
 		targetDelta = (dir.x < 0.0f) ? -1 : 1;
-	} else {
+	}
+	else {
 		slope = (dir.y / dir.x);
 		scanRange = (int)abs(dir.x);
 		periodAxis = &currentPos.y;
@@ -87,7 +89,8 @@ RasterisationMesh* RasterisationMesh::CreateTriangleFromPoints(const std::vector
 	for (size_t i = 0; i < inVerts.size() - 2; i += 3) {
 		if (type) {
 			tri->RasterSpanTriangle(inVerts[i], inVerts[i + 1], inVerts[i + 2]);
-		} else {
+		}
+		else {
 			tri->RasterLineEquasionTriangle(inVerts[i], inVerts[i + 1], inVerts[i + 2]);
 		}
 	}
@@ -98,7 +101,7 @@ RasterisationMesh* RasterisationMesh::CreateTriangleFromPoints(const std::vector
 	return tri;
 }
 
-void RasterisationMesh::RasterLineEquasionTriangle( const Vector3& p0, const Vector3& p1, const Vector3& p2) {
+void RasterisationMesh::RasterLineEquasionTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2) {
 	Vector2 topLeft, bottomRight;
 
 	Maths::ScreenBoxOfTri(p0, p1, p2, topLeft, bottomRight);
@@ -109,7 +112,7 @@ void RasterisationMesh::RasterLineEquasionTriangle( const Vector3& p0, const Vec
 
 	for (int y = (int)topLeft.y; y < bottomRight.y; y++) {
 		for (int x = (int)topLeft.x; x < bottomRight.x; x++) {
-			Vector3 screenPos((float) x, (float)y, 1.0f);
+			Vector3 screenPos((float)x, (float)y, 1.0f);
 
 			float line01 = Vector3::Dot(linev0v1, screenPos);
 			float line12 = Vector3::Dot(linev1v2, screenPos);
@@ -123,7 +126,7 @@ void RasterisationMesh::RasterLineEquasionTriangle( const Vector3& p0, const Vec
 }
 
 void RasterisationMesh::RasterSpanTriangle(const Vector3& v0, const Vector3& v1, const Vector3& v2) {
-	const Vector3* vertices[3] = {&v0, &v1, &v2};
+	const Vector3* vertices[3] = { &v0, &v1, &v2 };
 
 	if (vertices[1]->y < vertices[0]->y) {
 		std::swap(vertices[1], vertices[0]);
@@ -145,7 +148,7 @@ void RasterisationMesh::RasterSpanTriangle(const Vector3& v0, const Vector3& v1,
 	float longX = vertices[0]->x;
 	float shortX = vertices[0]->x;
 
-	for (int y = vertices[0]->y; y < vertices[1]->y ; y++) {
+	for (int y = vertices[0]->y; y < vertices[1]->y; y++) {
 		int startX = std::min(longX, shortX);
 		int endX = std::max(longX, shortX);
 
