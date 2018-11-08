@@ -37,7 +37,9 @@ namespace NCL {
 
 			void SetDepthBufferState(bool state);
 			void SetAlphaBlendingState(bool state);
-
+			void SetBlendToLinear();
+			void SetBlendToAdditive();
+			void SetBlendToInvert();
 		protected:
 			void RenderNode(RenderObject* root);
 	

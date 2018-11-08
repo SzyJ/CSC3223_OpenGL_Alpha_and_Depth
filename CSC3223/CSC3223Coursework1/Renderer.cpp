@@ -70,4 +70,14 @@ void Renderer::SetAlphaBlendingState(bool state) {
 	}
 	else {
 		glDisable(GL_BLEND);
-	}}
+	}}void Renderer::SetBlendToLinear() {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void Renderer::SetBlendToAdditive() {
+	glBlendFunc(GL_ONE, GL_ONE);
+}
+
+void Renderer::SetBlendToInvert() {
+	glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_DST_COLOR);
+}

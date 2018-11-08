@@ -86,7 +86,33 @@ void generateSpaceship(Renderer& renderer, const int xPos, const int zPos) {
 	renderer.AddRenderObject(new RenderObject(ship));
 }
 
-void generate3DPlanet(Renderer& renderer) {
+Matrix4 calculateRandomMatrix(const unsigned minScale, const unsigned scaleVarience, const int sceneSize) {
+	float scaleAmount = rand() % scaleVarience;
+	scaleAmount += minScale;
+	Matrix4 translate = Matrix4::Translation(
+		Vector3(
+			(rand() % (2 * sceneSize)) - sceneSize,
+			(rand() % (2 * sceneSize)) - sceneSize,
+			(rand() % (2 * sceneSize)) - sceneSize
+		)
+	);
+	Matrix4 scale = Matrix4::Scale(
+		Vector3(scaleAmount, scaleAmount, scaleAmount)
+	);
+
+	return translate * scale;
+}
+
+vector<RenderObject*>* generate3DPlanet(Renderer& renderer) {
+
+	TextureBase* dogeTexture = OGLTexture::RGBATextureFromFilename("Doge.png");
+	TextureBase* nyanTexture = OGLTexture::RGBATextureFromFilename("nyan.png");
+	TextureBase* brickTexture = OGLTexture::RGBATextureFromFilename("brick.png");
+
+	const unsigned planetCount = 15;
+	vector<RenderObject*>* planetList = new vector<RenderObject*>;
+	planetList->reserve(planetCount * 3);
+
 	OGLMesh* bluePlanet = new OGLMesh("Sphere.msh");
 	OGLMesh* greenPlanet = new OGLMesh("Sphere.msh");
 	OGLMesh* redPlanet = new OGLMesh("Sphere.msh");
@@ -95,7 +121,6 @@ void generate3DPlanet(Renderer& renderer) {
 	vector<Vector4> blueVerts;
 	vector<Vector4> greenVerts;
 	vector<Vector4> redVerts;
-
 	blueVerts.reserve(vertexCount);
 	greenVerts.reserve(vertexCount);
 	redVerts.reserve(vertexCount);
@@ -118,59 +143,27 @@ void generate3DPlanet(Renderer& renderer) {
 	redPlanet->UploadToGPU();
 
 
-	for (int i = 0; i < 10; i++) {
-		float scaleAmount = rand() % 50;
-		scaleAmount += 10;
-		Matrix4 translate = Matrix4::Translation(
-			Vector3(
-				((rand() % 2000) * -1) + 1000,
-				((rand() % 2000) * -1) + 1000,
-				((rand() % 2000) * -1) + 1000
-			)
-		);
-		Matrix4 scale = Matrix4::Scale(
-			Vector3(scaleAmount, scaleAmount, scaleAmount)
-		);
-		renderer.AddRenderObject(
-			new RenderObject(redPlanet, translate * scale)
-		);
+	for (int i = 0; i < planetCount; i++) {
+		// Red Planet
+		RenderObject* thisRedPlanet = new RenderObject(redPlanet, calculateRandomMatrix(10, 50, 1000));
+		thisRedPlanet->SetBaseTexture(dogeTexture);
+		renderer.AddRenderObject(thisRedPlanet);
+		planetList->push_back(thisRedPlanet);
+
+		// Green Planet
+		RenderObject* thisGreenPlanet = new RenderObject(greenPlanet, calculateRandomMatrix(10, 50, 1000));
+		thisGreenPlanet->SetBaseTexture(nyanTexture);
+		renderer.AddRenderObject(thisGreenPlanet);
+		planetList->push_back(thisGreenPlanet);
+
+		// Blue Planet
+		RenderObject* thisBluePlanet = new RenderObject(bluePlanet, calculateRandomMatrix(10, 50, 1000));
+		thisBluePlanet->SetBaseTexture(brickTexture);
+		renderer.AddRenderObject(thisBluePlanet);
+		planetList->push_back(thisBluePlanet);
 	}
 
-	for (int i = 0; i < 10; i++) {
-		float scaleAmount = rand() % 50;
-		scaleAmount += 10;
-		Matrix4 translate = Matrix4::Translation(
-			Vector3(
-				((rand() % 2000) * -1) + 1000,
-				((rand() % 2000) * -1) + 1000,
-				((rand() % 2000) * -1) + 1000
-			)
-		);
-		Matrix4 scale = Matrix4::Scale(
-			Vector3(scaleAmount, scaleAmount, scaleAmount)
-		);
-		renderer.AddRenderObject(
-			new RenderObject(greenPlanet, translate * scale)
-		);
-	}
-
-	for (int i = 0; i < 10; i++) {
-		float scaleAmount = rand() % 50;
-		scaleAmount += 10;
-		Matrix4 translate = Matrix4::Translation(
-			Vector3(
-				((rand() % 2000) * -1) + 1000,
-				((rand() % 2000) * -1) + 1000,
-				((rand() % 2000) * -1) + 1000
-			)
-		);
-		Matrix4 scale = Matrix4::Scale(
-			Vector3(scaleAmount, scaleAmount, scaleAmount)
-		);
-		renderer.AddRenderObject(
-			new RenderObject(bluePlanet, translate * scale)
-		);
-	}
+	return planetList;
 }
 
 void createPlanet(Renderer& renderer, const int x, const int y, const int radius, const int numberOfSides) {
@@ -215,10 +208,8 @@ void generateRingSystem(Renderer& renderer, int x, int y, int radius, int number
 	vector<Vector3> positions;
 	vector<Vector4> colours;
 
-
 	//positions.emplace_back(x, y, 1);
 	//colours.emplace_back(0.0f, 1.0f, 1.0f, 1.0f);
-
 
 	positions.reserve(numberOfVertices);
 	colours.reserve(numberOfVertices);
@@ -276,16 +267,36 @@ void generate3DStarfield(Renderer& renderer) {
 	}
 }
 
-void drawObjects(Renderer& renderer) {
+void generateNebula(Renderer& renderer) {
+	OGLMesh* blueCloud = new OGLMesh("Sphere.msh");
+	const unsigned vertexCount = blueCloud->GetVertexCount();
+
+	vector<Vector4> colour;
+	colour.reserve(vertexCount);
+	for (int i = 0; i < vertexCount; i++) {
+		colour.emplace_back(0.808f, 0.286f, 1.0f, 0.02f);
+	}
+	blueCloud->SetVertexColours(colour);
+	blueCloud->UploadToGPU();
+
+	
+
+	renderer.AddRenderObject(new RenderObject(blueCloud, Matrix4::Scale(Vector3(300, 300, 300))));
+
+}
+
+vector<RenderObject*>* drawObjects(Renderer& renderer) {
 	createSkybox(renderer);
-	//generateStarfield(renderer, 1000);
 	generateSpaceship(renderer, 0, 0);
 	createPlanet(renderer, 150, 150, 50, 20);
 	generateRingSystem(renderer, 150, 150, 75, 20);
 
-	generate3DPlanet(renderer);
+	generateNebula(renderer);
 
+	vector<RenderObject*>* planetList = generate3DPlanet(renderer);
 	generate3DStarfield(renderer);
+
+	return planetList;
 }
 
 void drawName(Renderer& renderer) {
@@ -301,12 +312,12 @@ int main() {
 
 	Renderer* renderer = new Renderer(*w);
 
-	drawObjects(*renderer);
+	vector<RenderObject*>* planetList = drawObjects(*renderer);
 
 	float aspect = w->GetScreenAspect();
 	Matrix4 proj = Matrix4::Perspective(1.0f, 9000.0f, aspect, 45.0f);
 	renderer->SetProjectionMatrix(proj);
-	renderer->SetDepthBufferState(true);
+
 
 	Vector3 viewPosition(0, 0, 0);
 
@@ -317,17 +328,30 @@ int main() {
 	bool depthBuffer = true;
 	bool alphaBlending = true;
 
+	renderer->SetDepthBufferState(true);
+	renderer->SetAlphaBlendingState(true);
+	renderer->SetBlendToLinear();
+
+
 	float pitch = 0.0f;
 	float yaw = 0.0f;
+
+	float totalTime = 0.0f;
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		float time = w->GetTimer()->GetTimeDelta();
-
+		
 		renderer->Update(time);
 
-		//renderer->DrawString("Yaw: " + std::to_string(yaw), Vector2(10, 30));
-		//renderer->DrawString("Pitch: " + std::to_string(pitch), Vector2(10, 10));
-		//renderer->DrawString("Cos(Yaw): " + std::to_string(cos((yaw * PI) / 180)), Vector2(10, 50));
-		//renderer->DrawString("Sin(Yaw): " + std::to_string(sin((yaw * PI) / 180)), Vector2(10, 70));
+		renderer->Render();
+
+		totalTime += time;
+		
+		for (int i = 0; i < planetList->size(); i++) {
+			RenderObject* thisPlanet = planetList->at(i);
+			thisPlanet->SetTransform(thisPlanet->GetTransform() * Matrix4::Rotation(totalTime * 0.00001f, Vector3(0, 1, 0)));
+		}
+
+		renderer->DrawString("x: " + std::to_string(viewPosition.x) + ", y: " + std::to_string(viewPosition.y) + ", z: " + std::to_string(viewPosition.z), Vector2(10, 10));
 
 		// Movement keys
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) {
@@ -382,11 +406,9 @@ int main() {
 		}
 		renderer->SetViewMatrix(
 			Matrix4::Rotation(pitch, Vector3(0, 1, 0)) *
-			Matrix4::Translation(viewPosition) *
-			Matrix4::Rotation(yaw, Vector3(1, 0, 0))
+			Matrix4::Rotation(yaw, Vector3(1, 0, 0)) *
+			Matrix4::Translation(viewPosition)
 		);
-
-		renderer->Render();
 
 		// Toggle between name and planets
 		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F9)) {
