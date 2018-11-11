@@ -20,7 +20,7 @@ Renderer::~Renderer()
 void Renderer::RenderFrame() {
 	OGLShader* activeShader = nullptr;
 
-	int modelLocation	= 0; 
+	int modelLocation = 0; 
 
 	for (const RenderObject* object : renderObjects) {
 		OGLShader* objectShader = (OGLShader*)object->GetShader();
@@ -62,6 +62,10 @@ void Renderer::SetDepthBufferState(bool state) {
 	else {
 		glDisable(GL_DEPTH_TEST);
 	}
+}
+
+void Renderer::SetDepthFunctionTo(GLenum functionType) {
+	glDepthFunc(functionType);
 }
 
 void Renderer::SetAlphaBlendingState(bool state) {

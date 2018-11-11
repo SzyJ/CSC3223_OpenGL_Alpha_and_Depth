@@ -35,7 +35,11 @@ namespace NCL {
 				viewMatrix = m;
 			}
 
+			// Depth Buffer States
 			void SetDepthBufferState(bool state);
+			void SetDepthFunctionTo(GLenum functionType);
+
+			// Alpha States
 			void SetAlphaBlendingState(bool state);
 			void SetBlendToLinear();
 			void SetBlendToAdditive();

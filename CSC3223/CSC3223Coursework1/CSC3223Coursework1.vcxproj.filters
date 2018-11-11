@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\RenderObjects">
+      <UniqueIdentifier>{72fb6b18-4dda-4f5f-ad90-cc38638cb6fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderObjects">
+      <UniqueIdentifier>{635a5616-cc70-45fb-b81e-37fd42461ee7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -24,6 +30,36 @@
     <ClCompile Include="Coursework1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomMatrixUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cloud.cpp">
+      <Filter>Source Files\RenderObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet.cpp">
+      <Filter>Source Files\RenderObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="DistantStar.cpp">
+      <Filter>Source Files\RenderObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RingSystem.cpp">
+      <Filter>Source Files\RenderObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Spaceship.cpp">
+      <Filter>Source Files\RenderObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Star.cpp">
+      <Filter>Source Files\RenderObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -31,6 +67,36 @@
     </ClInclude>
     <ClInclude Include="RenderObject.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomMatrixUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cloud.h">
+      <Filter>Header Files\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet.h">
+      <Filter>Header Files\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Spaceship.h">
+      <Filter>Header Files\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="DistantStar.h">
+      <Filter>Header Files\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RingSystem.h">
+      <Filter>Header Files\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Star.h">
+      <Filter>Header Files\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files\RenderObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

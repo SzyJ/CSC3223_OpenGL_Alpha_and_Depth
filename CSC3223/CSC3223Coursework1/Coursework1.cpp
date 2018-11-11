@@ -11,10 +11,12 @@
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 
 #include "Renderer.h"
+#include "Planet.h"
+#include "Scene.h"
 
 using namespace NCL;
 using namespace CSC3223;
-
+/*
 void generateStarfield(Renderer& renderer, const int sceneSize) {
 	OGLMesh* stars = new OGLMesh();
 	vector<Vector3> starPos;
@@ -86,9 +88,7 @@ void generateSpaceship(Renderer& renderer, const int xPos, const int zPos) {
 	renderer.AddRenderObject(new RenderObject(ship));
 }
 
-Matrix4 calculateRandomMatrix(const unsigned minScale, const unsigned scaleVarience, const int sceneSize) {
-	float scaleAmount = rand() % scaleVarience;
-	scaleAmount += minScale;
+Matrix4 randomDisplacementMatrix(const int sceneSize) {
 	Matrix4 translate = Matrix4::Translation(
 		Vector3(
 			(rand() % (2 * sceneSize)) - sceneSize,
@@ -96,27 +96,31 @@ Matrix4 calculateRandomMatrix(const unsigned minScale, const unsigned scaleVarie
 			(rand() % (2 * sceneSize)) - sceneSize
 		)
 	);
+
+	return translate;
+}
+
+Matrix4 randomScaleMatrix(const unsigned minScale, const unsigned scaleVarience) {
+	float scaleAmount = rand() % scaleVarience;
+	scaleAmount += minScale;
+
 	Matrix4 scale = Matrix4::Scale(
 		Vector3(scaleAmount, scaleAmount, scaleAmount)
 	);
 
-	return translate * scale;
+	return scale;
 }
 
-vector<RenderObject*>* generate3DPlanet(Renderer& renderer) {
-
-	TextureBase* dogeTexture = OGLTexture::RGBATextureFromFilename("Doge.png");
-	TextureBase* nyanTexture = OGLTexture::RGBATextureFromFilename("nyan.png");
-	TextureBase* brickTexture = OGLTexture::RGBATextureFromFilename("brick.png");
-
-	const unsigned planetCount = 15;
-	vector<RenderObject*>* planetList = new vector<RenderObject*>;
-	planetList->reserve(planetCount * 3);
+vector<Planet*>* generate3DPlanet(Renderer& renderer) {
+	const unsigned PLANET_COUNT = 2;
+	vector<Planet*>* planetList = new vector<Planet*>;
+	planetList->reserve(PLANET_COUNT * 3);
 
 	OGLMesh* bluePlanet = new OGLMesh("Sphere.msh");
 	OGLMesh* greenPlanet = new OGLMesh("Sphere.msh");
 	OGLMesh* redPlanet = new OGLMesh("Sphere.msh");
 
+	// Define Random colour patterns
 	const unsigned vertexCount = bluePlanet->GetVertexCount();
 	vector<Vector4> blueVerts;
 	vector<Vector4> greenVerts;
@@ -125,48 +129,61 @@ vector<RenderObject*>* generate3DPlanet(Renderer& renderer) {
 	greenVerts.reserve(vertexCount);
 	redVerts.reserve(vertexCount);
 	for (int i = 0; i < vertexCount; i++) {
-		blueVerts.emplace_back((float)(rand() % 30) / 255.0f, (float)(rand() % 30) / 255.0f, (float) (rand() % 255) / 255.0f, 1.0f);
-		greenVerts.emplace_back((float)(rand() % 30) / 255.0f, (float)(rand() % 255) / 255.0f, (float)(rand() % 30) / 255.0f, 1.0f);
-		redVerts.emplace_back((float)(rand() % 255) / 255.0f, (float)(rand() % 30) / 255.0f, (float)(rand() % 30) / 255.0f, 1.0f);
+		blueVerts.emplace_back(
+			(float)(rand() % 30) / 255.0f,
+			(float)(rand() % 30) / 255.0f,
+			(float)(rand() % 255) / 255.0f,
+			1.0f);
+		greenVerts.emplace_back(
+			(float)(rand() % 30) / 255.0f,
+			(float)(rand() % 255) / 255.0f,
+			(float)(rand() % 30) / 255.0f,
+			1.0f);
+		redVerts.emplace_back(
+			(float)(rand() % 255) / 255.0f,
+			(float)(rand() % 30) / 255.0f,
+			(float)(rand() % 30) / 255.0f,
+			1.0f);
 	}
 
+	// Set Planet Colours
 	bluePlanet->SetVertexColours(blueVerts);
 	greenPlanet->SetVertexColours(greenVerts);
 	redPlanet->SetVertexColours(redVerts);
 
+	// Set Type
 	bluePlanet->SetPrimitiveType(GeometryPrimitive::Triangles);
 	greenPlanet->SetPrimitiveType(GeometryPrimitive::Triangles);
 	redPlanet->SetPrimitiveType(GeometryPrimitive::Triangles);
 
+	// Upload 3 types of planets to GPU
 	bluePlanet->UploadToGPU();
 	greenPlanet->UploadToGPU();
 	redPlanet->UploadToGPU();
 
-
-	for (int i = 0; i < planetCount; i++) {
+	for (int i = 1; i <= PLANET_COUNT * 3; i+=3) {
 		// Red Planet
-		RenderObject* thisRedPlanet = new RenderObject(redPlanet, calculateRandomMatrix(10, 50, 1000));
-		thisRedPlanet->SetBaseTexture(dogeTexture);
-		renderer.AddRenderObject(thisRedPlanet);
+		Planet* thisRedPlanet = new Planet(redPlanet, randomScaleMatrix(5, 50), i * 10);
+		renderer.AddRenderObject(thisRedPlanet->getRenderObject());
 		planetList->push_back(thisRedPlanet);
 
 		// Green Planet
-		RenderObject* thisGreenPlanet = new RenderObject(greenPlanet, calculateRandomMatrix(10, 50, 1000));
-		thisGreenPlanet->SetBaseTexture(nyanTexture);
-		renderer.AddRenderObject(thisGreenPlanet);
+		Planet* thisGreenPlanet = new Planet(greenPlanet, randomScaleMatrix(5, 50), (i + 1) * 10);
+		//thisGreenPlanet->SetBaseTexture(nyanTexture);
+		renderer.AddRenderObject(thisGreenPlanet->getRenderObject());
 		planetList->push_back(thisGreenPlanet);
 
 		// Blue Planet
-		RenderObject* thisBluePlanet = new RenderObject(bluePlanet, calculateRandomMatrix(10, 50, 1000));
-		thisBluePlanet->SetBaseTexture(brickTexture);
-		renderer.AddRenderObject(thisBluePlanet);
+		Planet* thisBluePlanet = new Planet(bluePlanet, randomScaleMatrix(5, 50), (i + 2) * 10);
+		//thisBluePlanet->SetBaseTexture(brickTexture);
+		renderer.AddRenderObject(thisBluePlanet->getRenderObject());
 		planetList->push_back(thisBluePlanet);
 	}
 
 	return planetList;
 }
 
-void createPlanet(Renderer& renderer, const int x, const int y, const int radius, const int numberOfSides) {
+void generateDistantStar(Renderer& renderer, const int radius, const int numberOfSides) {
 	OGLMesh* planet = new OGLMesh();
 	const int numberOfVertices = numberOfSides + 2;
 
@@ -174,21 +191,23 @@ void createPlanet(Renderer& renderer, const int x, const int y, const int radius
 
 	vector<Vector3> positions;
 	vector<Vector4> colours;
-
-	positions.emplace_back(x, y, 1);
-	colours.emplace_back(0.0f, 1.0f, 1.0f, 1.0f);
+	int y = 0;
+	int x = 0;
+	positions.emplace_back(x, y, -6000);
+	
+	colours.emplace_back(1.0f, 1.0f, 0.0f, 1.0f);
 
 	positions.reserve(numberOfVertices);
 	colours.reserve(numberOfVertices);
 
 	for (int i = 0; i < numberOfVertices; i++) {
 		positions.emplace_back(
-			y + (radius * sin(i * doublePI / numberOfSides)),
 			x + (radius * cos(i * doublePI / numberOfSides)),
-			1
+			y + (radius * sin(i * doublePI / numberOfSides)),
+			-6000
 		);
 
-		colours.emplace_back(0.0f, 0.0f, 1.0f, 1.0f);
+		colours.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	planet->SetVertexPositions(positions);
@@ -199,7 +218,7 @@ void createPlanet(Renderer& renderer, const int x, const int y, const int radius
 	renderer.AddRenderObject(new RenderObject(planet));
 }
 
-void generateRingSystem(Renderer& renderer, int x, int y, int radius, int numberOfSides) {
+void generateRingSystem(Renderer& renderer, int radius, int numberOfSides) {
 	OGLMesh* planet = new OGLMesh();
 	const int numberOfVertices = numberOfSides + 2;
 
@@ -208,28 +227,24 @@ void generateRingSystem(Renderer& renderer, int x, int y, int radius, int number
 	vector<Vector3> positions;
 	vector<Vector4> colours;
 
-	//positions.emplace_back(x, y, 1);
-	//colours.emplace_back(0.0f, 1.0f, 1.0f, 1.0f);
-
 	positions.reserve(numberOfVertices);
 	colours.reserve(numberOfVertices);
 
-
 	for (int i = 0; i < numberOfVertices; i++) {
 		positions.emplace_back(
-			y + (radius * sin(i * doublePI / numberOfSides)),
-			x + (radius * cos(i * doublePI / numberOfSides)),
-			1
+			radius * cos(i * doublePI / numberOfSides),
+			0,
+			radius * sin(i * doublePI / numberOfSides)
 		);
 
-		colours.emplace_back(1.0f, 1.0f, 1.0f, 1.0f);
+		colours.emplace_back(sin(i + 1), sin(i + 3), sin(i + 5), 1.0f);
 	}
 
 	planet->SetVertexPositions(positions);
 	planet->SetVertexColours(colours);
 	planet->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
-
 	planet->UploadToGPU();
+
 	renderer.AddRenderObject(new RenderObject(planet));
 }
 
@@ -240,18 +255,17 @@ void generate3DStarfield(Renderer& renderer) {
 	vector<Vector4> colours;
 	colours.reserve(vertexCount);
 	for (int i = 0; i < vertexCount; i++) {
-		colours.emplace_back(1.0f, 1.0f, 1.0f, 1.0f);
+		colours.emplace_back(1.0f, 1.0f, 1.0f, (rand() % 100) + 150.0f / 255.0f);
 	}
 	
 	starPoints->SetVertexColours(colours);
 	starPoints->SetPrimitiveType(GeometryPrimitive::Points);
-	
 	starPoints->UploadToGPU();
 	
 	
 	for (int i = 0; i < 50; i++) {
 		float scaleAmount = rand() % 50;
-		scaleAmount += 2000;
+		scaleAmount += 6000;
 		Matrix4 scale = Matrix4::Scale(
 			Vector3(scaleAmount, scaleAmount, scaleAmount)
 		);
@@ -274,31 +288,64 @@ void generateNebula(Renderer& renderer) {
 	vector<Vector4> colour;
 	colour.reserve(vertexCount);
 	for (int i = 0; i < vertexCount; i++) {
-		colour.emplace_back(0.808f, 0.286f, 1.0f, 0.02f);
+		colour.emplace_back(0.143f, 0.236f, 1.0f, 0.05f);
 	}
 	blueCloud->SetVertexColours(colour);
 	blueCloud->UploadToGPU();
+	
+	const unsigned nebulaCount = 15;
+	const unsigned nebulaDensity = 25;
+
+	for (int eachNebula = 0; eachNebula < nebulaCount; eachNebula++) {
+		int x = rand() % 2000;
+		x -= 1000;
+		int z = rand() % 2000;
+		z -= 1000;
+		int y = rand() % 2000;
+		y -= 1000;
+		for (int i = 0; i < nebulaDensity; i++) {
+			renderer.AddRenderObject(new RenderObject(blueCloud, Matrix4::Translation(Vector3(x, y, z)) * randomDisplacementMatrix(60) * randomScaleMatrix(20, 50)));
+		}
+	}
+}
+
+void generateStar(Renderer& renderer, int scale) {
+	OGLMesh* star = new OGLMesh("Sphere.msh");
+	unsigned vertexCount = star->GetVertexCount();
+	vector<Vector4> colourData;
+	colourData.reserve(vertexCount);
+	for (int i = 0; i < vertexCount; i++) {
+		colourData.emplace_back(1, 1, 1, 1);
+	}
+	star->SetVertexColours(colourData);
+	star->UploadToGPU();
+
+	TextureBase* starTexture = OGLTexture::RGBATextureFromFilename("Doge.png");
+	RenderObject* renderStar = new RenderObject(star, Matrix4::Scale(Vector3(scale, scale, scale)));
+	renderStar->SetBaseTexture(starTexture);
+
+	renderer.AddRenderObject(renderStar);
+}
+
+vector<Planet*>* drawObjects(Renderer& renderer) {
+	createSkybox(renderer);
+	generate3DStarfield(renderer);
+	generateDistantStar(renderer, 100, 20);
+
+	generateSpaceship(renderer, 0, 0);
 
 	
+	generateRingSystem(renderer, 75, 20);
+	generateStar(renderer, 150);
 
-	renderer.AddRenderObject(new RenderObject(blueCloud, Matrix4::Scale(Vector3(300, 300, 300))));
-
-}
-
-vector<RenderObject*>* drawObjects(Renderer& renderer) {
-	createSkybox(renderer);
-	generateSpaceship(renderer, 0, 0);
-	createPlanet(renderer, 150, 150, 50, 20);
-	generateRingSystem(renderer, 150, 150, 75, 20);
-
+	vector<Planet*>* planetList = generate3DPlanet(renderer);
+	
 	generateNebula(renderer);
 
-	vector<RenderObject*>* planetList = generate3DPlanet(renderer);
-	generate3DStarfield(renderer);
-
+	
 	return planetList;
 }
-
+*/
 void drawName(Renderer& renderer) {
 
 }
@@ -312,63 +359,129 @@ int main() {
 
 	Renderer* renderer = new Renderer(*w);
 
-	vector<RenderObject*>* planetList = drawObjects(*renderer);
+	//vector<Planet*>* planetList = drawObjects(*renderer);
 
 	float aspect = w->GetScreenAspect();
-	Matrix4 proj = Matrix4::Perspective(1.0f, 9000.0f, aspect, 45.0f);
+	Matrix4 proj = Matrix4::Perspective(1.0f, 12000.0f, aspect, 45.0f);
 	renderer->SetProjectionMatrix(proj);
 
+	Vector3 viewPosition(0, -210, -600);
 
-	Vector3 viewPosition(0, 0, 0);
+	const float speed = 1.0f;
+	const float rotationSpeed = 0.6f;
+	bool mouseControls = true;
 
-	const float speed = 0.5f;
-	const float rotationSpeed = 0.1f;
 
 	bool objsDrawn = true;
+
+	std::string blendingState = "Linear";
+	short blendingMode = 0;
+	std::string depthState = "Less-or-Equal";
+
 	bool depthBuffer = true;
 	bool alphaBlending = true;
-
-	renderer->SetDepthBufferState(true);
-	renderer->SetAlphaBlendingState(true);
-	renderer->SetBlendToLinear();
-
+	renderer->SetDepthBufferState(depthBuffer);
+	renderer->SetAlphaBlendingState(alphaBlending);
 
 	float pitch = 0.0f;
 	float yaw = 0.0f;
 
 	float totalTime = 0.0f;
+
+	Scene* scene = new Scene();
+	scene->performInitialRender(*renderer);
+
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		float time = w->GetTimer()->GetTimeDelta();
 		
-		renderer->Update(time);
-
-		renderer->Render();
-
-		totalTime += time;
-		
-		for (int i = 0; i < planetList->size(); i++) {
-			RenderObject* thisPlanet = planetList->at(i);
-			thisPlanet->SetTransform(thisPlanet->GetTransform() * Matrix4::Rotation(totalTime * 0.00001f, Vector3(0, 1, 0)));
+		// Depth buffer
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F1)) {
+			depthBuffer = !depthBuffer;
+			renderer->SetDepthBufferState(depthBuffer);
+		}
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F2)) {
+			renderer->SetDepthFunctionTo(GL_EQUAL);
+			depthState = "Equal";
+		}
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F3)) {
+			renderer->SetDepthFunctionTo(GL_ALWAYS);
+			depthState = "Always";
+		}
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F4)) {
+			renderer->SetDepthFunctionTo(GL_LEQUAL);
+			depthState = "Less-or-Equal";
 		}
 
-		renderer->DrawString("x: " + std::to_string(viewPosition.x) + ", y: " + std::to_string(viewPosition.y) + ", z: " + std::to_string(viewPosition.z), Vector2(10, 10));
+		// Alpha blending
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F5)) {
+			alphaBlending = !alphaBlending;
+		}
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F6)) {
+			blendingMode = 0;
+			blendingState = "Linear";
+		}
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F7)) {
+			blendingMode = 1;
+			blendingState = "Additive";
+		}
+		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F8)) {
+			blendingMode = 2;
+			blendingState = "Invert";
+		}
+		switch (blendingMode) {
+		case 0:
+			renderer->SetBlendToLinear();
+			break;
+		case 1:
+			renderer->SetBlendToAdditive();
+			break;
+		case 2:
+			renderer->SetBlendToInvert();
+			break;
+		}
+		renderer->SetAlphaBlendingState(alphaBlending);
+
+		if (objsDrawn) {
+			scene->update(time);
+		}
+		renderer->Update(time);
+		
+		if (objsDrawn) {
+			scene->render(*renderer);
+		}
+		renderer->Render();
+		
+		/*
+		totalTime += time;
+		
+		for (Planet* planet : *planetList) {
+			planet->update(time);
+		}*/
+		
+		// Draw Render Info
+		std::string alphaInfo = "Alpha: ";
+		alphaInfo += alphaBlending ? "On [" + blendingState + "]" : "Off";
+		std::string depthInfo = "Depth: ";
+		depthInfo += depthBuffer ? "On [" + depthState + "]" : "Off";
+		renderer->DrawString(alphaInfo, Vector2(10, 35));
+		renderer->DrawString(depthInfo, Vector2(10, 10));
 
 		// Movement keys
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) {
-			viewPosition.z += cos((pitch * PI) / 180) * speed;
-			viewPosition.x -= sin((pitch * PI) / 180) * speed;
+			viewPosition.z += cos((yaw * PI) / 180) * speed;
+			viewPosition.x -= sin((yaw * PI) / 180) * speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {
-			viewPosition.x -= sin(((pitch - 90) * PI) / 180) * speed;
-			viewPosition.z += cos(((pitch - 90) * PI) / 180) * speed;
+			viewPosition.x -= sin(((yaw - 90) * PI) / 180) * speed;
+			viewPosition.z += cos(((yaw - 90) * PI) / 180) * speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {
-			viewPosition.z -= cos((pitch * PI) / 180) * speed;
-			viewPosition.x += sin((pitch * PI) / 180) * speed;
+			viewPosition.z -= cos((yaw * PI) / 180) * speed;
+			viewPosition.x += sin((yaw * PI) / 180) * speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {
-			viewPosition.x += sin(((pitch - 90) * PI) / 180) * speed;
-			viewPosition.z -= cos(((pitch - 90) * PI) / 180) * speed;
+			viewPosition.x += sin(((yaw - 90) * PI) / 180) * speed;
+			viewPosition.z -= cos(((yaw - 90) * PI) / 180) * speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT)) {
 			viewPosition.y += speed;
@@ -378,59 +491,60 @@ int main() {
 		}
 
 		// Rotation
-		//pitch += Window::GetMouse()->GetRelativePosition().x;
-		//yaw += Window::GetMouse()->GetRelativePosition().y;
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_T)) {
+			mouseControls = !mouseControls;
+		}
+		if (mouseControls) {
+			yaw += Window::GetMouse()->GetRelativePosition().x;
+			pitch += Window::GetMouse()->GetRelativePosition().y;
+			w->LockMouseToWindow(true);
+			w->ShowOSPointer(false);
+		} else {
+			w->ShowOSPointer(true);
+		}
+
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_Q)) {
-			pitch -= rotationSpeed;
-			if (pitch < 0) {
-				pitch += 360;
-			}
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_E)) {
-			pitch += rotationSpeed;
-			if (pitch > 360) {
-				pitch -= 360;
-			}
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_F)) {
-			yaw += rotationSpeed;
-			if (yaw > 360) {
-				yaw -= 360;
-			}
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_R)) {
 			yaw -= rotationSpeed;
 			if (yaw < 0) {
 				yaw += 360;
 			}
 		}
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_E)) {
+			yaw += rotationSpeed;
+			if (yaw > 360) {
+				yaw -= 360;
+			}
+		}
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_F)) {
+			pitch += rotationSpeed;
+			if (pitch > 360) {
+				pitch-= 360;
+			}
+		}
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_R)) {
+			pitch -= rotationSpeed;
+			if (pitch < 0) {
+				pitch += 360;
+			}
+		}
 		renderer->SetViewMatrix(
-			Matrix4::Rotation(pitch, Vector3(0, 1, 0)) *
-			Matrix4::Rotation(yaw, Vector3(1, 0, 0)) *
+			Matrix4::Rotation(pitch, Vector3(1, 0, 0)) *
+			Matrix4::Rotation(yaw, Vector3(0, 1, 0)) *
 			Matrix4::Translation(viewPosition)
 		);
 
 		// Toggle between name and planets
 		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F9)) {
+			
 			renderer->DeleteAllRenderObjects();
 			if (objsDrawn) {
+				delete scene;
 				drawName(*renderer);
 			} else {
-				drawObjects(*renderer);
+				scene = new Scene();
+				scene->performInitialRender(*renderer);
 			}
 			objsDrawn = !objsDrawn;
-		}
-
-		// Toggle depth buffer
-		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F1)) {
-			depthBuffer = !depthBuffer;
-			renderer->SetDepthBufferState(depthBuffer);
-		}
-
-		// Toggle alpha blending
-		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_F5)) {
-			alphaBlending = !alphaBlending;
-			renderer->SetAlphaBlendingState(alphaBlending);
 		}
 
 		if (Window::GetKeyboard()->KeyPressed(KEYBOARD_PRIOR)) {
