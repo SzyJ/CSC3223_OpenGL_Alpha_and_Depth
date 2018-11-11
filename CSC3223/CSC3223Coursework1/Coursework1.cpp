@@ -11,9 +11,11 @@
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 
 #include "Renderer.h"
-#include "Planet.h"
-#include "Scene.h"
 
+#include "Scene.h"
+#include "NameScene.h"
+
+#include "RasterisationMesh.h"
 using namespace NCL;
 using namespace CSC3223;
 /*
@@ -347,7 +349,55 @@ vector<Planet*>* drawObjects(Renderer& renderer) {
 }
 */
 void drawName(Renderer& renderer) {
+	OGLMesh* lines = new OGLMesh();
+	lines->SetVertexPositions({
+		Vector3(150, 50, 0),
+		Vector3(180, 80, 0),
+		Vector3(100, 200, 0),
+		Vector3(150, 150, 0)
+		});
+	lines->SetVertexColours({
+		Vector4(1, 0, 0, 1),
+		Vector4(0, 1, 0, 1),
+		Vector4(0, 0, 1, 1),
+		Vector4(1, 0, 1, 1)
+		});
+	lines->SetPrimitiveType(GeometryPrimitive::Lines);
+	lines->UploadToGPU();
+	renderer.AddRenderObject(new RenderObject(lines));
 
+
+	OGLMesh* tris = new OGLMesh();
+	tris->SetVertexPositions({
+		Vector3(550, 200, 0),
+		Vector3(750, 200, 0),
+		Vector3(650, 100, 0)
+		});
+	tris->SetVertexColours({
+		Vector4(1, 0, 0, 1),
+		Vector4(0, 1, 0, 1),
+		Vector4(0, 0, 1, 1)
+		});
+	tris->SetPrimitiveType(GeometryPrimitive::Triangles);
+	tris->UploadToGPU();
+	renderer.AddRenderObject(new RenderObject(tris));
+
+	OGLMesh* rasterLine = (OGLMesh*)RasterisationMesh::CreateLineFromPoints({
+		Vector3(150, 350, 0),
+		Vector3(180, 380, 0),
+		Vector3(100, 500, 0),
+		Vector3(150, 450, 0)
+		}, false);
+
+	renderer.AddRenderObject(new RenderObject(rasterLine));
+
+	OGLMesh* rasterTri = (OGLMesh*)RasterisationMesh::CreateTriangleFromPoints({
+		Vector3(550, 400, 0),
+		Vector3(750, 380, 0),
+		Vector3(650, 300, 0)
+		}, false);
+
+	renderer.AddRenderObject(new RenderObject(rasterTri));
 }
 
 int main() {
@@ -387,7 +437,7 @@ int main() {
 	float yaw = 0.0f;
 
 	float totalTime = 0.0f;
-
+	NameScene* nameScene = nullptr;
 	Scene* scene = new Scene();
 	scene->performInitialRender(*renderer);
 
@@ -539,8 +589,10 @@ int main() {
 			renderer->DeleteAllRenderObjects();
 			if (objsDrawn) {
 				delete scene;
-				drawName(*renderer);
+				nameScene = new NameScene();
+				nameScene->performInitialRender(*renderer);
 			} else {
+				delete nameScene;
 				scene = new Scene();
 				scene->performInitialRender(*renderer);
 			}

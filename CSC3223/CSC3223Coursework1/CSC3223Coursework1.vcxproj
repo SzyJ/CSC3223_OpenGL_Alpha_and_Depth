@@ -141,9 +141,12 @@
     <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="Coursework1.cpp" />
     <ClCompile Include="DistantStar.cpp" />
+    <ClCompile Include="GPUName.cpp" />
     <ClCompile Include="GPUObjects.cpp" />
+    <ClCompile Include="NameScene.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="RandomMatrixUtils.cpp" />
+    <ClCompile Include="RasterisationMesh.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="RingSystem.cpp" />
@@ -155,9 +158,12 @@
   <ItemGroup>
     <ClInclude Include="Cloud.h" />
     <ClInclude Include="DistantStar.h" />
+    <ClInclude Include="GPUName.h" />
     <ClInclude Include="GPUObjects.h" />
+    <ClInclude Include="NameScene.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="RandomMatrixUtils.h" />
+    <ClInclude Include="RasterisationMesh.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="RingSystem.h" />

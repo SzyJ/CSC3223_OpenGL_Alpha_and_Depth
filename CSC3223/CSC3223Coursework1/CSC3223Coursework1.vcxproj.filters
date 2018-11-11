@@ -60,6 +60,15 @@
     <ClCompile Include="Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RasterisationMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUName.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NameScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -97,6 +106,15 @@
     </ClInclude>
     <ClInclude Include="Skybox.h">
       <Filter>Header Files\RenderObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterisationMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NameScene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
