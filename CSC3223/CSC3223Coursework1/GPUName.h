@@ -18,8 +18,8 @@ using namespace CSC3223;
 
 class GPUName {
 private:
-	const float LETTER_WIDTH = 10;
-	const float LETTER_HEIGHT = 20;
+	const float LETTER_WIDTH = 50;
+	const float LETTER_HEIGHT = 100;
 
 	bool useBresenham = false;
 

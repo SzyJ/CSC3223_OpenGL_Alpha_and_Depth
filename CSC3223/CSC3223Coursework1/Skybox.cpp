@@ -5,7 +5,7 @@ Skybox::Skybox(OGLMesh* backgroundMesh, OGLMesh* starfieldMesh) {
 	starfield.reserve(STARFIELD_DENSITY);
 	for (int i = 0; i < STARFIELD_DENSITY; i++) {
 		float scaleAmount = rand() % 50;
-		scaleAmount += SCENE_RADIUS - 100;
+		scaleAmount += SCENE_RADIUS - 500;
 		Matrix4 scale = Matrix4::Scale(
 			Vector3(scaleAmount, scaleAmount, scaleAmount)
 		);
@@ -15,8 +15,11 @@ Skybox::Skybox(OGLMesh* backgroundMesh, OGLMesh* starfieldMesh) {
 		Matrix4 xRotation = Matrix4::Rotation(
 			rand() % 360, Vector3(1, 0, 0)
 		);
+		Matrix4 zRotation = Matrix4::Rotation(
+			rand() % 360, Vector3(0, 0, 1)
+		);
 
-		starfield.push_back(new RenderObject(starfieldMesh, xRotation * yRotation * scale));
+		starfield.push_back(new RenderObject(starfieldMesh, zRotation * xRotation * yRotation * scale));
 	}
 }
 

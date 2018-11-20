@@ -23,9 +23,17 @@ void GPUName::setUpLetterMeshes() {
 		{
 		Vector3(HALF_WIDTH  , QUART_HEIGHT  , 0),
 		Vector3(0           , HALF_HEIGHT   , 0),
+
+		Vector3(0           , HALF_HEIGHT   , 0),
+		Vector3(-HALF_WIDTH , QUART_HEIGHT  , 0),
+
 		Vector3(-HALF_WIDTH , QUART_HEIGHT  , 0),
 		Vector3(HALF_WIDTH  , -QUART_HEIGHT , 0),
-		Vector3(0           , HALF_HEIGHT   , 0),
+
+		Vector3(HALF_WIDTH  , -QUART_HEIGHT , 0),
+		Vector3(0           , -HALF_HEIGHT   , 0),
+
+		Vector3(0           , -HALF_HEIGHT   , 0),
 		Vector3(-HALF_WIDTH , -QUART_HEIGHT , 0)
 		}
 	, useBresenham);
@@ -35,6 +43,10 @@ void GPUName::setUpLetterMeshes() {
 		{
 		Vector3(-HALF_WIDTH , HALF_HEIGHT  , 0),
 		Vector3(HALF_WIDTH  , HALF_HEIGHT  , 0),
+
+		Vector3(HALF_WIDTH  , HALF_HEIGHT  , 0),
+		Vector3(-HALF_WIDTH , -HALF_HEIGHT , 0),
+
 		Vector3(-HALF_WIDTH , -HALF_HEIGHT , 0),
 		Vector3(HALF_WIDTH  , -HALF_HEIGHT , 0)
 		}
@@ -45,7 +57,10 @@ void GPUName::setUpLetterMeshes() {
 		{
 		Vector3(-HALF_WIDTH , HALF_HEIGHT  , 0),
 		Vector3(0           , 0            , 0),
+
 		Vector3(HALF_WIDTH  , HALF_HEIGHT  , 0),
+		Vector3(0           , 0            , 0),
+
 		Vector3(0           , 0            , 0),
 		Vector3(0           , -HALF_HEIGHT , 0)
 		}
@@ -56,20 +71,61 @@ void GPUName::setUpLetterMeshes() {
 		{
 		Vector3(-HALF_WIDTH , -HALF_HEIGHT , 0),
 		Vector3(-HALF_WIDTH , HALF_HEIGHT  , 0),
+
+		Vector3(-HALF_WIDTH , HALF_HEIGHT  , 0),
 		Vector3(0           , 0            , 0),
+
+		Vector3(0           , 0            , 0),
+		Vector3(HALF_WIDTH  , HALF_HEIGHT  , 0),
+
 		Vector3(HALF_WIDTH  , HALF_HEIGHT  , 0),
 		Vector3(HALF_WIDTH  , -HALF_HEIGHT  , 0)
 		}
 	, useBresenham);
 	m->UploadToGPU();
 	
-	o = new OGLMesh();
+	o = (OGLMesh*)RasterisationMesh::CreateTriangleFromPoints(
+		{
+		Vector3(0           , HALF_HEIGHT  , 0),
+		Vector3(HALF_WIDTH  , QUART_HEIGHT , 0),
+		Vector3(-HALF_WIDTH , QUART_HEIGHT , 0),
+
+		Vector3(0          , HALF_HEIGHT    , 0),
+		Vector3(HALF_WIDTH , QUART_HEIGHT   , 0),
+		Vector3(HALF_WIDTH , -QUART_HEIGHT  , 0),
+
+		Vector3(HALF_WIDTH , QUART_HEIGHT   , 0),
+		Vector3(HALF_WIDTH , -QUART_HEIGHT  , 0),
+		Vector3(0          , -HALF_HEIGHT   , 0),
+
+		Vector3(HALF_WIDTH  , -QUART_HEIGHT , 0),
+		Vector3(0           , -HALF_HEIGHT  , 0),
+		Vector3(-HALF_WIDTH , -QUART_HEIGHT , 0),
+
+		Vector3(0           , -HALF_HEIGHT  , 0),
+		Vector3(-HALF_WIDTH , -QUART_HEIGHT , 0),
+		Vector3(-HALF_WIDTH , QUART_HEIGHT  , 0),
+
+		Vector3(-HALF_WIDTH , -QUART_HEIGHT , 0),
+		Vector3(-HALF_WIDTH , QUART_HEIGHT  , 0),
+		Vector3(0           , HALF_HEIGHT   , 0),
+
+		Vector3(HALF_WIDTH  , QUART_HEIGHT , 0),
+		Vector3(0           , HALF_HEIGHT  , 0),
+		Vector3(-HALF_WIDTH , QUART_HEIGHT , 0)
+		}
+	, false);
+
 	o->UploadToGPU();
 	
 	n = (OGLMesh*)RasterisationMesh::CreateLineFromPoints(
 		{
 		Vector3(-HALF_WIDTH , -HALF_HEIGHT , 0),
 		Vector3(-HALF_WIDTH , HALF_HEIGHT  , 0),
+
+		Vector3(-HALF_WIDTH , HALF_HEIGHT  , 0),
+		Vector3(HALF_WIDTH  , -HALF_HEIGHT , 0),
+
 		Vector3(HALF_WIDTH  , -HALF_HEIGHT , 0),
 		Vector3(HALF_WIDTH  , HALF_HEIGHT  , 0)
 		}

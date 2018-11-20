@@ -19,18 +19,15 @@ using namespace CSC3223;
 class RingSystem {
 private:
 	const float OFFSET_ANGLE = 0.1f;
-	const float ROTATION_SPEED = 0.001f;
+	const float ROTATION_SPEED = 0.7f;
 	RenderObject* renderObject;
 	float totalTime;
-	float xPos;
-	float zPos;
 
 public:
 	RingSystem(OGLMesh* mesh);
 	~RingSystem();
 
 	void performInitialRender(Renderer& renderer);
-	void setNewLocation(float x, float z);
 	void update(float delta);
 	void render(Renderer& renderer);
 };

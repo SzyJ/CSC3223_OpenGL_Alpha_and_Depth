@@ -19,7 +19,8 @@ using namespace CSC3223;
 
 class NameScene {
 private:
-	const float LETTER_SPACING = 10.0f;
+	const float LETTER_SPACING = 100.0f;
+	const int LETTER_COUNT = 6;
 
 	GPUName MESHES;
 

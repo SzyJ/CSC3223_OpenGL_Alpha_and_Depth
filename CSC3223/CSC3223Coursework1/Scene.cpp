@@ -18,7 +18,8 @@ Scene::Scene() {
 	spaceship = new Spaceship(MESHES.get_Spaceship());
 }
 
-Scene::~Scene() {/*
+Scene::~Scene() {
+	/*
 	for (Planet* planet : planets) {
 		delete planet;
 	}
@@ -29,7 +30,8 @@ Scene::~Scene() {/*
 	delete centralStar;
 	delete distantStar;
 	delete ringSystem;
-	delete spaceship;*/
+	delete spaceship;
+	*/
 }
 
 void Scene::performInitialRender(Renderer& renderer) {
@@ -52,10 +54,7 @@ void Scene::update(float delta) {
 	for (Planet* planet : planets) {
 		planet->update(delta);
 	}
-	if (planets.size() > 0) {
-		ringSystem->setNewLocation(planets.at(0)->getXPos(), planets.at(0)->getZPos());
-		ringSystem->update(delta);
-	}
+	ringSystem->update(delta);
 }
 
 void Scene::render(Renderer& renderer) {

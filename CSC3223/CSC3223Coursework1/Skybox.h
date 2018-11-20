@@ -21,7 +21,7 @@ using namespace CSC3223;
 class Skybox {
 private:
 	const unsigned STARFIELD_DENSITY = 50;
-	const unsigned SCENE_RADIUS = 7000;
+	const unsigned SCENE_RADIUS = 9000;
 
 	vector<RenderObject*> starfield;
 	RenderObject* background;

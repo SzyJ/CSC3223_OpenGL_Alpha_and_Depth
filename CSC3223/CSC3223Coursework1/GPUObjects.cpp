@@ -145,7 +145,7 @@ void GPUObjects::setUpRainbowRing() {
 			ringRadius * sin(i * doublePI / ringSmoothness)
 		);
 
-		ringColours.emplace_back(sin(i + 1), sin(i + 3), sin(i + 5), 1.0f);
+		ringColours.emplace_back(sin(i + 1), sin(i + 3), sin(i + 5), 0.1f);
 	}
 
 	ring_rainbow->SetVertexPositions(ringPositions);
